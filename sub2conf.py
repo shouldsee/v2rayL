@@ -6,6 +6,12 @@ import json
 import pickle
 import requests
 from config import conf_template as conf
+import os
+import json
+
+CONFIG_DIR = "./v2rayL-config"
+if not os.path.isdir(CONFIG_DIR):
+    os.makedirs(CONFIG_DIR)
 
 
 class Sub2Conf(object):
@@ -18,7 +24,7 @@ class Sub2Conf(object):
 
         # 解析后配置
         try:
-            with open("/etc/v2rayL/data", "rb") as f:
+            with open(CONFIG_DIR + "/data", "rb") as f:
                 self.saved_conf = pickle.load(f)
         except:
             self.saved_conf = {
@@ -71,7 +77,8 @@ class Sub2Conf(object):
 
     def b642conf(self, prot, tp, b64str):
         if prot == "vmess":
-            ret = eval(base64.b64decode(b64str + "==").decode())
+            x = base64.b64decode(b64str + "==").decode()
+            ret = json.loads(x)
             region = ret['ps']
 
         elif prot == "ss":
@@ -134,7 +141,7 @@ class Sub2Conf(object):
             }
 
         
-        with open("/etc/v2rayL/config.json", "w") as f:
+        with open(CONFIG_DIR + "/config.json", "w") as f:
             f.write(json.dumps(conf, indent=4))
 
     
@@ -145,7 +152,7 @@ class Sub2Conf(object):
         except:
             self.saved_conf['subs'].pop(region)
 
-        with open("/etc/v2rayL/data", "wb") as jf:
+        with open(CONFIG_DIR + "/data/", "wb") as jf:
             pickle.dump(self.saved_conf, jf)
     
 
@@ -174,7 +181,7 @@ class Sub2Conf(object):
 
         self.conf = dict(self.saved_conf['local'], **self.saved_conf['subs'])
 
-        with open("/etc/v2rayL/data", "wb") as jf:
+        with open(CONFIG_DIR +"/data", "wb") as jf:
             pickle.dump(self.saved_conf, jf)
 
 
@@ -193,7 +200,7 @@ class Sub2Conf(object):
 
         self.conf = dict(self.saved_conf['local'], **self.saved_conf['subs'])
 
-        with open("/etc/v2rayL/data", "wb") as jf:
+        with open( CONFIG_DIR + "/data", "wb") as jf:
             pickle.dump(self.saved_conf, jf)
 
 # def b642conf(prot, b64str):
@@ -224,5 +231,17 @@ if __name__ == '__main__':
 
     # t = base64.b64decode("ewoidiI6ICIyIiwKInBzIjogIjIzM3YyLmNvbV8xNDIuOTMuNTAuNzgiLAoiYWRkIjogIjE0Mi45My41MC43OCIsCiJwb3J0IjogIjM5Mzk4IiwKImlkIjogIjc1Y2JmYzI0LTZhNjAtNDBmMC05Yjc2LTUyMTlmNTIwYTJlMCIsCiJhaWQiOiAiMjMzIiwKIm5ldCI6ICJrY3AiLAoidHlwZSI6ICJ1dHAiLAoiaG9zdCI6ICIiLAoicGF0aCI6ICIiLAoidGxzIjogIiIKfQo=").decode().strip()
     # print(t)
+    t = "d3d3Lmdvb2dsZS5jb206MTphdXRoX2NoYWluX2E6Y2hhY2hhMjA6dGxzMS4yX3RpY2tldF9hdXRoOlluSmxZV3QzWVd4cy8_b2Jmc3BhcmFtPSZwcm90b3BhcmFtPSZyZW1hcmtzPTVZbXA1TDJaNXJXQjZZZVA3N3lhTVRBd0xqQXdKU0F4TURJMFRVSSZncm91cD1Uak5TVHc"
+    # t = base64.b64decode("d3d3Lmdvb2dsZS5jb206MTphdXRoX2NoYWluX2E6Y2hhY2hhMjA6dGxzMS4yX3RpY2tldF9hdXRoOlluSmxZV3QzWVd4cy8_b2Jmc3BhcmFtPSZwcm90b3BhcmFtPSZyZW1hcmtzPTVZbXA1TDJaNXJXQjZZZVA3N3lhTVRBd0xqQXdKU0F4TURJMFRVSSZncm91cD1Uak5TVHc'], ['ssr', 'd3d3Lmdvb2dsZS5jb206MjphdXRoX2NoYWluX2E6Y2hhY2hhMjA6dGxzMS4yX3RpY2tldF9hdXRoOlluSmxZV3QzWVd4cy8_b2Jmc3BhcmFtPSZwcm90b3BhcmFtPSZyZW1hcmtzPTZMLUg1cHlmNXBlMjZaZTA3N3lhTWpBeU1DMHdPQzB5TVNBeE1qbzBNam94TVEmZ3JvdXA9VGpOU1R3")
+    # t = base64.b64decode(t)
+    print(t)
+    # assert 0
+    # b642conf("ss","YWVzLTI1Ni1jZmI6NTQxNjAzNDY2QDE0Mi45My41MC43ODo5ODk4#ss")
+    # b642conf("ssr","d3d3Lmdvb2dsZS5jb206MTphdXRoX2NoYWluX2E6Y2hhY2hhMjA6dGxzMS4yX3RpY2tldF9hdXRoOlluSmxZV3QzWVd4cy8_b2Jmc3BhcmFtPSZwcm90b3BhcmFtPSZyZW1hcmtzPTVZbXA1TDJaNXJXQjZZZVA3N3lhTVRBd0xqQXdKU0F4TURJMFRVSSZncm91cD1Uak5TVHc")
+    url = "https://nnn3ro.link/link/yutP0XvyPEIIa9n1?mu=4"
 
-    b642conf("ss","YWVzLTI1Ni1jZmI6NTQxNjAzNDY2QDE0Mi45My41MC43ODo5ODk4#ss")
+
+    x = Sub2Conf(url)
+    # "https://nnn3ro.link/link/yutP0XvyPEIIa9n1?mu=1")
+    x.update()
+    print(vars(x))

@@ -5,7 +5,7 @@ conf_template = {
   "stats":{},
   "inbounds":[
     {
-      "port":"1080",
+      "port":"1090",
       "protocol":"socks",
       "settings":{
         "auth":"noauth",

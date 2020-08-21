@@ -3,15 +3,15 @@
 import sys
 import subprocess
 import pickle
-from sub2conf import Sub2Conf
+from sub2conf import Sub2Conf, CONFIG_DIR
 from time import sleep
 
-
+# CONFIG_DIR = CONFIG_DIR + "/"
 class V2rayL(object):
     def __init__(self):
         
         try:
-            with open("/etc/v2rayL/current", "rb") as f:
+            with open(CONFIG_DIR + "/current", "rb") as f:
                 self.current, self.url, self.auto = pickle.load(f)
         except:
             self.current = "未连接VPN"
@@ -80,7 +80,7 @@ class V2rayL(object):
         print("1. 开启自动更新订阅\n2. 关闭自动更新订阅\n3. 修改订阅地址\n0. 返回上一层\n")
         choice = input("请输入 >> ")
         if choice == "1":
-            with open("/etc/v2rayL/current", "wb") as jf:
+            with open( CONFIG_DIR + "/current", "wb") as jf:
                 self.auto = True
                 pickle.dump((self.current, self.url, self.auto), jf)
             print("\n已开启自动更新订阅，下次进入生效\n")
@@ -88,7 +88,7 @@ class V2rayL(object):
             self.run()
 
         elif choice == "2":
-            with open("/etc/v2rayL/current", "wb") as jf:
+            with open(CONFIG_DIR + "/current", "wb") as jf:
                 self.auto = False
                 pickle.dump((self.current, self.url, self.auto), jf)
             print("\n已关闭自动更新订阅，下次进入生效\n")
@@ -138,11 +138,19 @@ class V2rayL(object):
                 self.subs.setconf(tmp[int(choice)])
                 try:
                     print("\r\n正在连接................\n")
-                    output = subprocess.getoutput(["sudo systemctl status v2rayL.service"])
-                    if "Active: active" in output:
-                        subprocess.call(["sudo systemctl restart v2rayL.service"], shell=True)
-                    else:
-                        subprocess.call(["sudo systemctl start v2rayL.service"], shell=True)
+                    CMD = "v2ray -config %s/config.json" %CONFIG_DIR 
+                    print("[command]:%s"%CMD)
+                    subprocess.call([CMD], shell=True)
+                    
+                    # output = subprocess.getoutput(["systemctl status v2rayL.service"])
+                    # if "Active: active" in output:
+                    #     CMD = "sudo systemctl restart v2rayL.service"
+                    #     print("[command]:%s"%CMD)
+                    #     subprocess.call([CMD], shell=True)
+                    # else:
+                    #     CMD = "sudo systemctl start v2rayL.service"
+                    #     print("[command]:%s"%CMD)
+                    #     subprocess.call([CMD], shell=True)
                 except:
                     print("连接失败，请尝试更新订阅后再次连接......")
                     self.run()
@@ -151,7 +159,7 @@ class V2rayL(object):
                     print("成功连接到VPN：{}\n".format(tmp[int(choice)]))
                     print("\r------------------------------------------\n")
                     self.current = tmp[int(choice)]
-                    with open("/etc/v2rayL/current", "wb") as jf:
+                    with open( CONFIG_DIR + "current", "wb") as jf:
                         pickle.dump((self.current, self.url, self.auto), jf)
 
             else:
@@ -169,7 +177,7 @@ class V2rayL(object):
                 print("VPN连接已断开..............\n")
                 print("\r------------------------------------------\n")
                 self.current = "未连接至VPN"
-                with open("/etc/v2rayL/current", "wb") as jf:
+                with open( CONFIG_DIR + "/current", "wb") as jf:
                         pickle.dump((self.current, self.url, self.auto), jf)
                 
             else:
@@ -197,12 +205,12 @@ class V2rayL(object):
             self.subs.update()
             print("订阅地址更新完成，VPN已更新.....\n")
             print("\r------------------------------------------\n")
-            with open("/etc/v2rayL/current", "wb") as jf:
+            with open(CONFIG_DIR + "/current", "wb") as jf:
                 pickle.dump((self.current, url, self.auto), jf)
             self.run()
         # else:
         #     try:
-        #         with open("/etc/v2rayL/current", "rb") as f:
+        #         with open(CONFIG_DIR + "/current", "rb") as f:
         #             _, self.url = pickle.load(f)
         #     except:
         #         print("\r------------------------------------------\n")
